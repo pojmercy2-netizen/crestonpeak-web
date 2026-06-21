@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:prod": "NEXT_PUBLIC_API_URL=https://nobleedgeapi.vercel.app/api/v1 next build ",
+    "build:prod": "NEXT_PUBLIC_API_URL=https://crestonpeak-api.vercel.app/api/v1 next build ",
     "start": "next start",
     "lint": "eslint"
   },
