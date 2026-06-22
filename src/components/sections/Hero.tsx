@@ -1,13 +1,55 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, ShieldCheck, BarChart3, Zap, Headphones } from "lucide-react";
 
+interface BtcPrice {
+    price: number;
+    change24h: number;
+    flash: "up" | "down" | null;
+}
+
+function useLiveBtcPrice() {
+    const [btc, setBtc] = useState<BtcPrice>({ price: 0, change24h: 0, flash: null });
+    const prevPriceRef = useRef<number>(0);
+
+    useEffect(() => {
+        const fetchPrice = async () => {
+            try {
+                const res = await fetch(
+                    "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true",
+                    { cache: "no-store" }
+                );
+                if (!res.ok) return;
+                const data = await res.json();
+                const newPrice: number = data?.bitcoin?.usd ?? 0;
+                const newChange: number = data?.bitcoin?.usd_24h_change ?? 0;
+                if (newPrice > 0) {
+                    const direction = newPrice >= prevPriceRef.current ? "up" : "down";
+                    prevPriceRef.current = newPrice;
+                    setBtc({ price: newPrice, change24h: newChange, flash: direction });
+                    // Clear flash after 800ms
+                    setTimeout(() => setBtc(prev => ({ ...prev, flash: null })), 800);
+                }
+            } catch {
+                // Silently ignore network errors
+            }
+        };
+
+        fetchPrice();
+        const interval = setInterval(fetchPrice, 15000);
+        return () => clearInterval(interval);
+    }, []);
+
+    return btc;
+}
+
 export function Hero() {
     const tickerRef = useRef<HTMLDivElement>(null);
+    const btc = useLiveBtcPrice();
 
     useEffect(() => {
         if (!tickerRef.current) return;
@@ -212,9 +254,29 @@ export function Hero() {
                                 <div className="flex justify-between items-start mt-1">
                                     <div>
                                         <span className="text-slate-400 text-[6px] font-medium uppercase">BTC / USDT</span>
-                                        <h4 className="text-white font-extrabold text-[10px] tracking-tight mt-0.5">$66,591.10</h4>
+                                        <h4
+                                            className={`font-extrabold text-[10px] tracking-tight mt-0.5 transition-colors duration-300 ${
+                                                btc.flash === "up"
+                                                    ? "text-emerald-400"
+                                                    : btc.flash === "down"
+                                                    ? "text-rose-400"
+                                                    : "text-white"
+                                            }`}
+                                        >
+                                            {btc.price > 0
+                                                ? `$${btc.price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                                                : "Loading..."}
+                                        </h4>
                                     </div>
-                                    <span className="text-emerald-400 font-bold text-[6.5px] bg-emerald-500/10 px-1 rounded">+2.35%</span>
+                                    <span
+                                        className={`font-bold text-[6.5px] px-1 rounded ${
+                                            btc.change24h >= 0
+                                                ? "text-emerald-400 bg-emerald-500/10"
+                                                : "text-rose-400 bg-rose-500/10"
+                                        }`}
+                                    >
+                                        {btc.change24h >= 0 ? "+" : ""}{btc.change24h.toFixed(2)}%
+                                    </span>
                                 </div>
 
                                 {/* Candle Chart (SVG) */}

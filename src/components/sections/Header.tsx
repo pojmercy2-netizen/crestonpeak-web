@@ -91,7 +91,7 @@ export function Header() {
                         </div>
                     ) : (
                         <div className="grid grid-cols-2 gap-3">
-                            <Button asChild variant="outline" className="w-full border-slate-200 text-slate-800 dark:border-white/20 dark:text-white dark:hover:bg-white/10 rounded-xl" onClick={toggleMenu}>
+                            <Button asChild variant="outline" className="w-full border-slate-200 text-black dark:border-white/20 dark:text-white dark:hover:bg-white/10 rounded-xl" onClick={toggleMenu}>
                                 <Link href="/login">Login</Link>
                             </Button>
                             <Button asChild className="w-full bg-[#0F2E23] hover:bg-[#163d30] text-white dark:bg-[#A2B585] dark:hover:bg-[#b0c493] dark:text-[#0F2E23] rounded-xl" onClick={toggleMenu}>

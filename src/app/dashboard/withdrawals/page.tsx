@@ -23,6 +23,7 @@ export default function WithdrawalsPage() {
     const [status, setStatus] = useState<"idle" | "processing" | "success">("idle");
     const [error, setError] = useState("");
     const [balance, setBalance] = useState(0);
+    const [requestedAmount, setRequestedAmount] = useState("");
 
     useEffect(() => {
         const fetchBalance = async () => {
@@ -60,6 +61,7 @@ export default function WithdrawalsPage() {
             });
 
             if (response.success) {
+                setRequestedAmount(amount);
                 setStatus("success");
                 setAmount("");
                 setWallet("");
@@ -96,7 +98,7 @@ export default function WithdrawalsPage() {
                                 <div>
                                     <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Withdrawal Requested!</h3>
                                     <p className="text-slate-500 dark:text-slate-400 mt-2 max-w-sm">
-                                        Your request for <span className="text-slate-900 dark:text-white font-bold">${amount}</span> has been received and is under review.
+                                        Your request for <span className="text-slate-900 dark:text-white font-bold">${Number(requestedAmount).toLocaleString("en-US", { minimumFractionDigits: 2 })}</span> has been received and is under review.
                                     </p>
                                 </div>
                                 <Button onClick={() => setStatus("idle")} variant="outline" className="mt-4 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800">
