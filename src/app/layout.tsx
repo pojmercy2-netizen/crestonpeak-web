@@ -5,6 +5,7 @@ import { ClientProviders } from "@/components/providers/ClientProviders";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { WhatsAppWidget } from "@/components/ui/WhatsAppWidget";
 import { PageLoader } from "@/components/ui/PageLoader";
+import { TawkChatWidget } from "@/components/ui/TawkChatWidget";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -50,6 +51,7 @@ export default function RootLayout({
             <PageLoader />
             {children}
             <WhatsAppWidget />
+            <TawkChatWidget />
           </ClientProviders>
         </ThemeProvider>
       </body>
